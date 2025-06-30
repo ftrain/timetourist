@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Slider - All of Time</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+        }
+
+        .year-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.2);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+            word-break: break-all;
+            line-height: 1.2;
+            text-align: center;
+            hyphens: none;
+        }
+
+        .year-display.large-number {
+            font-size: 2.5rem;
+        }
+
+        .year-display.very-large-number {
+            font-size: 1.8rem;
+        }
+
+        .year-display.extremely-large-number {
+            font-size: 1.4rem;
+        }
+
+        .slider-container {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, 
+                #ff6b6b 0%, 
+                #feca57 25%, 
+                #48dbfb 50%, 
+                #ff9ff3 75%, 
+                #54a0ff 100%);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #2a5298;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #2a5298;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .scale-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .scale-marker {
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .scale-marker:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .era-indicator {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Time Slider</h1>
+        <p class="subtitle">Navigate through all of time - from the Big Bang to the heat death of the universe</p>
+        
+        <div class="year-display" id="yearDisplay">2025 CE</div>
+        <div class="era-indicator" id="eraIndicator">Present Day</div>
+        
+        <div class="slider-container">
+            <input type="range" 
+                   class="slider" 
+                   id="timeSlider" 
+                   min="0" 
+                   max="1000" 
+                   step="1" 
+                   value="500">
+        </div>
+        
+        <div class="scale-info">
+            <div class="scale-marker" data-year="-13800000000">
+                <strong>Big Bang</strong><br>
+                -13.8 billion years
+            </div>
+            <div class="scale-marker" data-year="2025">
+                <strong>Present</strong><br>
+                ~2025 CE
+            </div>
+            <div class="scale-marker" data-year="1000000000000000000000000000000000000000000000000000000000000000000000000000000">
+                <strong>Heat Death</strong><br>
+                10<sup>78</sup> years
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TimeSlider extends HTMLElement {
+            constructor() {
+                super();
+                this.currentYear = 2025;
+                this.slider = null;
+                this.yearDisplay = null;
+                this.eraIndicator = null;
+            }
+
+            connectedCallback() {
+                this.slider = document.getElementById('timeSlider');
+                this.yearDisplay = document.getElementById('yearDisplay');
+                this.eraIndicator = document.getElementById('eraIndicator');
+                
+                this.setDefaultPosition();
+                this.slider.addEventListener('input', (e) => this.updateYear(e.target.value));
+                this.slider.addEventListener('change', (e) => this.updateYear(e.target.value));
+                
+                // Add click handlers for scale markers
+                document.querySelectorAll('.scale-marker').forEach(marker => {
+                    marker.addEventListener('click', () => {
+                        const targetYear = parseFloat(marker.dataset.year);
+                        this.jumpToYear(targetYear);
+                    });
+                });
+            }
+
+            jumpToYear(year) {
+                const position = this.yearToPosition(year);
+                this.slider.value = Math.round(position);
+                this.updateYear(this.slider.value);
+            }
+
+            // Convert slider position (0-1000) to year
+            positionToYear(position) {
+                const pos = position / 1000; // Normalize to 0-1
+                
+                if (pos < 0.25) {
+                    // Deep BCE: -13.8 billion to -10,000
+                    const progress = pos / 0.25;
+                    const maxLog = Math.log10(13.8e9);
+                    const minLog = Math.log10(10000);
+                    const logValue = maxLog - (progress * (maxLog - minLog));
+                    return -Math.pow(10, logValue);
+                } else if (pos < 0.45) {
+                    // Recent BCE: -10,000 to 0
+                    const progress = (pos - 0.25) / 0.2;
+                    return -10000 + (progress * 10000);
+                } else if (pos < 0.55) {
+                    // Early CE: 0 to 10,000  
+                    const progress = (pos - 0.45) / 0.1;
+                    return progress * 10000;
+                } else {
+                    // Future CE: 10,000 to 10^78
+                    const progress = (pos - 0.55) / 0.45;
+                    if (progress >= 0.999) {
+                        // Force exact 10^78 at the very end
+                        return 1e78;
+                    }
+                    const minLog = Math.log10(10000); // log10(10000) = 4
+                    const maxLog = 78; // log10(10^78) = 78
+                    const logValue = minLog + (progress * (maxLog - minLog));
+                    return Math.pow(10, logValue);
+                }
+            }
+
+            // Convert year to slider position (0-1000)
+            yearToPosition(year) {
+                if (year < -10000) {
+                    // Deep BCE: -13.8 billion to -10,000
+                    const absYear = Math.abs(year);
+                    const maxLog = Math.log10(13.8e9);
+                    const minLog = Math.log10(10000);
+                    const yearLog = Math.log10(absYear);
+                    const progress = (maxLog - yearLog) / (maxLog - minLog);
+                    return (progress * 0.25) * 1000;
+                } else if (year < 0) {
+                    // Recent BCE: -10,000 to 0
+                    const progress = (year + 10000) / 10000;
+                    return ((0.25 + progress * 0.2) * 1000);
+                } else if (year <= 10000) {
+                    // Early CE: 0 to 10,000
+                    const progress = year / 10000;
+                    return ((0.45 + progress * 0.1) * 1000);
+                } else {
+                    // Future CE: 10,000 to 10^78
+                    const minLog = Math.log10(10000);
+                    const maxLog = 78;
+                    const yearLog = Math.log10(year);
+                    const progress = (yearLog - minLog) / (maxLog - minLog);
+                    return ((0.55 + progress * 0.45) * 1000);
+                }
+            }
+
+            setDefaultPosition() {
+                const position = this.yearToPosition(this.currentYear);
+                this.slider.value = Math.round(position);
+                this.updateYear(this.slider.value);
+            }
+
+            formatYear(year) {
+                const roundedYear = Math.round(year);
+                
+                if (roundedYear === 0) {
+                    return "0";
+                } else if (roundedYear < 0) {
+                    return `${this.formatLargeNumber(Math.abs(roundedYear))} BCE`;
+                } else {
+                    return `${this.formatLargeNumber(roundedYear)} CE`;
+                }
+            }
+
+            formatLargeNumber(num) {
+                if (num < 1000) {
+                    return num.toLocaleString();
+                } else if (num < 1e6) {
+                    return `${(num / 1000).toFixed(1)} thousand`;
+                } else if (num < 1e9) {
+                    return `${(num / 1e6).toFixed(1)} million`;
+                } else if (num < 1e12) {
+                    return `${(num / 1e9).toFixed(1)} billion`;
+                } else if (num < 1e15) {
+                    return `${(num / 1e12).toFixed(1)} trillion`;
+                } else if (num < 1e18) {
+                    return `${(num / 1e15).toFixed(1)} quadrillion`;
+                } else if (num < 1e21) {
+                    return `${(num / 1e18).toFixed(1)} quintillion`;
+                } else if (num < 1e24) {
+                    return `${(num / 1e21).toFixed(1)} sextillion`;
+                } else if (num < 1e27) {
+                    return `${(num / 1e24).toFixed(1)} septillion`;
+                } else if (num < 1e30) {
+                    return `${(num / 1e27).toFixed(1)} octillion`;
+                } else if (num < 1e33) {
+                    return `${(num / 1e30).toFixed(1)} nonillion`;
+                } else if (num < 1e36) {
+                    return `${(num / 1e33).toFixed(1)} decillion`;
+                } else if (num < 1e39) {
+                    return `${(num / 1e36).toFixed(1)} undecillion`;
+                } else if (num < 1e42) {
+                    return `${(num / 1e39).toFixed(1)} duodecillion`;
+                } else {
+                    // For extremely large numbers, use nested naming
+                    const exponent = Math.floor(Math.log10(num));
+                    if (exponent >= 60 && exponent < 78) {
+                        const billions = Math.floor(exponent / 9);
+                        const remainder = exponent % 9;
+                        const mantissa = (num / Math.pow(10, exponent)).toFixed(1);
+                        const baseNames = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion'];
+                        let description = '';
+                        for (let i = 0; i < billions; i++) {
+                            description += 'billion ';
+                        }
+                        if (remainder > 0) {
+                            description += baseNames[remainder] + ' ';
+                        }
+                        return `${mantissa} ${description.trim()}`;
+                    } else if (exponent >= 78) {
+                        // Special case for 10^78 and beyond
+                        return `1 googol googol googol googol googol googol googol googol`;
+                    } else {
+                        const mantissa = (num / Math.pow(10, 42)).toFixed(1);
+                        return `${mantissa} tredecillion`;
+                    }
+                }
+            }
+
+            getNumberClass(year) {
+                const absYear = Math.abs(year);
+                if (absYear >= 1e20) return 'extremely-large-number';
+                if (absYear >= 1e12) return 'very-large-number';
+                if (absYear >= 1e8) return 'large-number';
+                return '';
+            }
+
+            getEraDescription(year) {
+                if (year < -13e9) return "Before the Big Bang";
+                if (year < -4.5e9) return "Early Universe";
+                if (year < -3.8e9) return "Formation of Earth";
+                if (year < -500e6) return "Precambrian Era";
+                if (year < -65e6) return "Age of Dinosaurs";
+                if (year < -2e6) return "Cenozoic Era";
+                if (year < -10000) return "Ice Ages";
+                if (year < 0) return "Prehistoric Times";
+                if (year < 500) return "Ancient History";
+                if (year < 1500) return "Medieval Period";
+                if (year < 1800) return "Renaissance & Early Modern";
+                if (year < 1900) return "19th Century";
+                if (year < 2000) return "20th Century";
+                if (year < 2100) return "Present Day";
+                if (year < 1e6) return "Near Future";
+                if (year < 1e9) return "Far Future";
+                if (year < 1e12) return "Stellar Evolution Era";
+                if (year < 1e15) return "Degenerate Era";
+                if (year < 1e40) return "Black Hole Era";
+                return "Heat Death Era";
+            }
+
+            updateYear(position) {
+                const year = this.positionToYear(position);
+                this.yearDisplay.innerHTML = this.formatYear(year);
+                this.yearDisplay.className = `year-display ${this.getNumberClass(year)}`;
+                this.eraIndicator.textContent = this.getEraDescription(year);
+            }
+        }
+
+        // Initialize the time slider component
+        customElements.define('time-slider', TimeSlider);
+        
+        // Create and initialize the component
+        document.addEventListener('DOMContentLoaded', () => {
+            new TimeSlider().connectedCallback();
+        });
+    </script>
+</body>
+</html>
