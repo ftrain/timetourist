@@ -1,0 +1,138 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 3rem;
+}
+
+.year-display {
+    font-size: 4rem;
+    font-weight: bold;
+    margin: 2rem 0;
+    padding: 1rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.2);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+    line-height: 1.2;
+    text-align: center;
+    hyphens: none;
+    white-space: pre-line;
+}
+
+.year-display.large-number {
+    font-size: 2.5rem;
+}
+
+.year-display.very-large-number {
+    font-size: 1.8rem;
+}
+
+.year-display.extremely-large-number {
+    font-size: 1.4rem;
+}
+
+.slider-container {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, 
+        #ff6b6b 0%, 
+        #feca57 25%, 
+        #48dbfb 50%, 
+        #ff9ff3 75%, 
+        #54a0ff 100%);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #2a5298;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #2a5298;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.scale-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.scale-marker {
+    padding: 0.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.scale-marker:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.era-indicator {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    opacity: 0.9;
+}

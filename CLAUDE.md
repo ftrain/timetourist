@@ -23,9 +23,18 @@ The slider uses a multi-segment logarithmic mapping:
 ### Core Functions
 
 - `positionToYear(position)` - Converts slider position (0-1000) to year value
-- `yearToPosition(year)` - Converts year value to slider position
-- `formatYear(year)` - Formats year with full comma-separated numbers and BCE/CE
+- `yearToPosition(year)` - Converts year value to slider position  
+- `formatYear(year)` - Intelligently formats years with intuitive display rules
+- `formatLargeNumber(num)` - Handles named number formatting with clean number detection
 - `getEraDescription(year)` - Provides contextual era descriptions
+
+### Number Formatting Rules
+
+- **Recent history/future** (±10,000 years): Show actual numbers with BCE/CE (e.g., "2025 CE", "1000 BCE")
+- **Deeper history** (>10,000 years ago): Use "years ago" format (e.g., "13.8 billion years ago")
+- **Deeper future** (>10,000 years from now): Use "years from now" format (e.g., "1.5 trillion years from now")
+- **Clean numbers**: Show "2000" instead of "2.0 thousand", "1000000" instead of "1.0 million"
+- **Very large numbers** (≥10^15): Show both named and actual number formats
 
 ### Web Components
 
