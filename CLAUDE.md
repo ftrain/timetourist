@@ -8,11 +8,11 @@ This is a single-page web application that implements a logarithmic time slider 
 
 ## Project Structure
 
-Use native Web Components and clean, accessible HTML.
+Use native Web Components and clean, accessible HTML following WCAG 2.1 AA standards.
 
-- `index.html`
-- `style.css`
-- `script.js`
+- `index.html` - Semantic HTML structure with ARIA labels and accessibility features
+- `style.css` - Visual styling with focus indicators and accessibility enhancements
+- `script.js` - Interactive functionality with keyboard navigation and screen reader support
 
 ## Data Sources
 - As the slider is moved, show the eras or periods that correspond to the slider position. 
@@ -31,11 +31,14 @@ The slider uses a multi-segment logarithmic mapping:
 
 ### Core Functions
 
-- `positionToYear(position)` - Converts slider position (0-1000) to year value
+- `positionToYear(position)` - Converts slider position (0-10000) to year value
 - `yearToPosition(year)` - Converts year value to slider position  
 - `formatYear(year)` - Intelligently formats years with intuitive display rules
 - `formatLargeNumber(num)` - Handles named number formatting with clean number detection
 - `getEraDescription(year)` - Provides contextual era descriptions
+- `setupKeyboardNavigation()` - Configures keyboard shortcuts and accessibility features
+- `throttledAnnounce()` - Manages screen reader announcements to prevent spam
+- `handleEventsKeydown()` - Handles keyboard navigation within events list
 
 ### Number Formatting Rules
 
@@ -47,7 +50,27 @@ The slider uses a multi-segment logarithmic mapping:
 
 ### Web Components
 
-Uses a custom `TimeSlider` class that extends HTMLElement, though the implementation is simplified and doesn't use shadow DOM.
+Uses a custom `TimeSlider` class that extends HTMLElement, though the implementation is simplified and doesn't use shadow DOM. The component includes comprehensive accessibility features and keyboard navigation support.
+
+### Accessibility Features
+
+The application is fully WCAG 2.1 AA compliant with:
+
+- **Semantic HTML**: Proper heading structure, landmarks, and ARIA labels
+- **Keyboard Navigation**: Full slider control with arrow keys, Home/End for extremes, Page Up/Down for large jumps
+- **Screen Reader Support**: Live regions, throttled announcements, and descriptive labels
+- **Visual Accessibility**: Focus indicators, high contrast mode support, and respect for user preferences
+- **Motor Accessibility**: Large touch targets (44px minimum) and multiple input methods
+
+#### Keyboard Shortcuts
+
+- `Arrow Keys` - Navigate through time
+- `Home` - Jump to Big Bang (-13.8 billion years)
+- `End` - Jump to Heat Death (10^78 years)
+- `Page Up/Down` - Large time jumps (±100 slider units)
+- `Ctrl/Cmd + N` - Jump to Now (2025)
+- `Tab` - Navigate between interactive elements
+- `Arrow Keys` (in events list) - Navigate through historical events
 
 ## Development Notes
 

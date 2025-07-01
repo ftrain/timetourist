@@ -1,0 +1,26 @@
+{
+  "name": "time-tourist",
+  "version": "1.0.0",
+  "description": "Journey through 13.8 billion years of cosmic history",
+  "main": "index.html",
+  "scripts": {
+    "build": "node build.js",
+    "serve": "python3 -m http.server 8000",
+    "deploy": "npm run build && echo 'Ready for GitHub Pages deployment'"
+  },
+  "keywords": [
+    "timeline",
+    "history",
+    "cosmology",
+    "education",
+    "interactive",
+    "accessibility"
+  ],
+  "author": "Time Tourist Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/time-tourist.git"
+  },
+  "homepage": "https://yourusername.github.io/time-tourist"
+}

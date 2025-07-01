@@ -6,285 +6,191 @@ class TimeSlider extends HTMLElement {
         this.yearDisplay = null;
         this.eraIndicator = null;
         this.eventsContainer = null;
-        this.initializeEvents();
+        this.historicalEvents = {};
+        this.darkMode = this.getInitialDarkMode();
+        this.loadEvents();
     }
 
-    initializeEvents() {
-        this.historicalEvents = {
-            // Geological Eons
-            [-4567000000]: [
-                {text: "Formation of Earth", link: "https://en.wikipedia.org/wiki/Formation_and_evolution_of_the_Solar_System"},
-                {text: "Hadean Eon begins", link: "https://en.wikipedia.org/wiki/Hadean"}
-            ],
-            [-4031000000]: [
-                {text: "Archean Eon begins", link: "https://en.wikipedia.org/wiki/Archean"},
-                {text: "First stable continental crust", link: "https://en.wikipedia.org/wiki/Continental_crust"}
-            ],
-            [-3800000000]: [{text: "Earliest evidence of life on Earth", link: "https://en.wikipedia.org/wiki/Earliest_known_life_forms"}],
-            [-2500000000]: [
-                {text: "Proterozoic Eon begins", link: "https://en.wikipedia.org/wiki/Proterozoic"},
-                {text: "Great Oxidation Event", link: "https://en.wikipedia.org/wiki/Great_Oxidation_Event"}
-            ],
-            [-541000000]: [
-                {text: "Phanerozoic Eon begins", link: "https://en.wikipedia.org/wiki/Phanerozoic"},
-                {text: "Cambrian explosion", link: "https://en.wikipedia.org/wiki/Cambrian_explosion"}
-            ],
-            
-            // Paleozoic Era
-            [-485000000]: [
-                {text: "Ordovician Period", link: "https://en.wikipedia.org/wiki/Ordovician"},
-                {text: "Marine life diversifies", link: "https://en.wikipedia.org/wiki/Great_Ordovician_Biodiversification_Event"}
-            ],
-            [-443000000]: [
-                {text: "Silurian Period", link: "https://en.wikipedia.org/wiki/Silurian"},
-                {text: "First land plants", link: "https://en.wikipedia.org/wiki/Evolutionary_history_of_plants"}
-            ],
-            [-419000000]: [
-                {text: "Devonian Period", link: "https://en.wikipedia.org/wiki/Devonian"},
-                {text: "Age of Fishes", link: "https://en.wikipedia.org/wiki/Devonian#Life"}
-            ],
-            [-358000000]: [
-                {text: "Carboniferous Period", link: "https://en.wikipedia.org/wiki/Carboniferous"},
-                {text: "Coal forests", link: "https://en.wikipedia.org/wiki/Carboniferous#Climate_and_weather"}
-            ],
-            [-252000000]: [{text: "Permian-Triassic extinction", link: "https://en.wikipedia.org/wiki/Permian%E2%80%93Triassic_extinction_event"}],
-            
-            // Mesozoic Era
-            [-251000000]: [
-                {text: "Triassic Period begins", link: "https://en.wikipedia.org/wiki/Triassic"},
-                {text: "First dinosaurs", link: "https://en.wikipedia.org/wiki/Evolution_of_dinosaurs"}
-            ],
-            [-201000000]: [
-                {text: "Jurassic Period", link: "https://en.wikipedia.org/wiki/Jurassic"},
-                {text: "Age of large dinosaurs", link: "https://en.wikipedia.org/wiki/Jurassic#Fauna"}
-            ],
-            [-145000000]: [
-                {text: "Cretaceous Period", link: "https://en.wikipedia.org/wiki/Cretaceous"},
-                {text: "Flowering plants evolve", link: "https://en.wikipedia.org/wiki/Flowering_plant"}
-            ],
-            [-66000000]: [
-                {text: "Cretaceous-Paleogene extinction", link: "https://en.wikipedia.org/wiki/Cretaceous%E2%80%93Paleogene_extinction_event"},
-                {text: "End of non-avian dinosaurs", link: "https://en.wikipedia.org/wiki/Dinosaur"}
-            ],
-            
-            // Cenozoic Era
-            [-65000000]: [
-                {text: "Paleogene Period", link: "https://en.wikipedia.org/wiki/Paleogene"},
-                {text: "Rise of mammals", link: "https://en.wikipedia.org/wiki/Evolution_of_mammals"}
-            ],
-            [-23000000]: [
-                {text: "Neogene Period", link: "https://en.wikipedia.org/wiki/Neogene"},
-                {text: "Grasslands spread", link: "https://en.wikipedia.org/wiki/Grassland#Evolution"}
-            ],
-            [-2600000]: [
-                {text: "Quaternary Period", link: "https://en.wikipedia.org/wiki/Quaternary"},
-                {text: "Ice ages begin", link: "https://en.wikipedia.org/wiki/Ice_age"}
-            ],
-            [-300000]: [{text: "Homo sapiens emerges", link: "https://en.wikipedia.org/wiki/Homo_sapiens"}],
-            [-50000]: [{text: "Humans reach Australia", link: "https://en.wikipedia.org/wiki/Prehistory_of_Australia"}],
-            [-15000]: [{text: "Humans reach Americas", link: "https://en.wikipedia.org/wiki/Settlement_of_the_Americas"}],
-            
-            // Neolithic Revolution
-            [-10000]: [
-                {text: "Agriculture begins", link: "https://en.wikipedia.org/wiki/Agriculture"},
-                {text: "Neolithic Revolution", link: "https://en.wikipedia.org/wiki/Neolithic_Revolution"}
-            ],
-            [-9000]: [{text: "Çatalhöyük settlement", link: "https://en.wikipedia.org/wiki/%C3%87atalh%C3%B6y%C3%BCk"}],
-            [-8000]: [{text: "Farming spreads to Europe", link: "https://en.wikipedia.org/wiki/Neolithic_Europe"}],
-            [-3500]: [
-                {text: "Writing invented", link: "https://en.wikipedia.org/wiki/History_of_writing"},
-                {text: "Wheel invented", link: "https://en.wikipedia.org/wiki/Wheel"}
-            ],
-            [-3200]: [
-                {text: "Bronze Age begins", link: "https://en.wikipedia.org/wiki/Bronze_Age"},
-                {text: "Early civilizations", link: "https://en.wikipedia.org/wiki/Civilization"}
-            ],
-            [-3100]: [{text: "Egyptian hieroglyphs", link: "https://en.wikipedia.org/wiki/Egyptian_hieroglyphs"}],
-            [-2600]: [{text: "Great Pyramid of Giza built", link: "https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza"}],
-            [-2334]: [
-                {text: "Sargon of Akkad", link: "https://en.wikipedia.org/wiki/Sargon_of_Akkad"},
-                {text: "First empire", link: "https://en.wikipedia.org/wiki/Akkadian_Empire"}
-            ],
-            [-1800]: [{text: "Code of Hammurabi", link: "https://en.wikipedia.org/wiki/Code_of_Hammurabi"}],
-            [-1200]: [
-                {text: "Iron Age begins", link: "https://en.wikipedia.org/wiki/Iron_Age"},
-                {text: "Bronze Age collapse", link: "https://en.wikipedia.org/wiki/Late_Bronze_Age_collapse"}
-            ],
-            
-            // Iron Age & Classical Antiquity
-            [-776]: [{text: "First Olympic Games", link: "https://en.wikipedia.org/wiki/Ancient_Olympic_Games"}],
-            [-753]: [{text: "Rome founded", link: "https://en.wikipedia.org/wiki/Founding_of_Rome"}],
-            [-508]: [{text: "Athenian democracy", link: "https://en.wikipedia.org/wiki/Athenian_democracy"}],
-            [-490]: [{text: "Battle of Marathon", link: "https://en.wikipedia.org/wiki/Battle_of_Marathon"}],
-            [-480]: [{text: "Battle of Thermopylae", link: "https://en.wikipedia.org/wiki/Battle_of_Thermopylae"}],
-            [-447]: [{text: "Parthenon construction", link: "https://en.wikipedia.org/wiki/Parthenon"}],
-            [-399]: [{text: "Death of Socrates", link: "https://en.wikipedia.org/wiki/Trial_of_Socrates"}],
-            [-336]: [{text: "Alexander the Great", link: "https://en.wikipedia.org/wiki/Alexander_the_Great"}],
-            [-221]: [{text: "Qin Dynasty unifies China", link: "https://en.wikipedia.org/wiki/Qin_dynasty"}],
-            [-49]: [{text: "Caesar crosses Rubicon", link: "https://en.wikipedia.org/wiki/Caesar%27s_civil_war"}],
-            [-44]: [{text: "Assassination of Caesar", link: "https://en.wikipedia.org/wiki/Assassination_of_Julius_Caesar"}],
-            [-27]: [{text: "Roman Empire begins", link: "https://en.wikipedia.org/wiki/Roman_Empire"}],
-            
-            // Common Era
-            [0]: [{text: "Birth of Jesus", link: "https://en.wikipedia.org/wiki/Nativity_of_Jesus"}],
-            [30]: [{text: "Crucifixion of Jesus", link: "https://en.wikipedia.org/wiki/Crucifixion_of_Jesus"}],
-            [476]: [{text: "Fall of Western Roman Empire", link: "https://en.wikipedia.org/wiki/Fall_of_the_Western_Roman_Empire"}],
-            [800]: [{text: "Charlemagne crowned Emperor", link: "https://en.wikipedia.org/wiki/Charlemagne"}],
-            [1066]: [{text: "Norman Conquest", link: "https://en.wikipedia.org/wiki/Norman_Conquest"}],
-            [1215]: [{text: "Magna Carta", link: "https://en.wikipedia.org/wiki/Magna_Carta"}],
-            [1347]: [{text: "Black Death", link: "https://en.wikipedia.org/wiki/Black_Death"}],
-            [1453]: [{text: "Fall of Constantinople", link: "https://en.wikipedia.org/wiki/Fall_of_Constantinople"}],
-            [1492]: [{text: "Columbus reaches Americas", link: "https://en.wikipedia.org/wiki/Voyages_of_Christopher_Columbus"}],
-            [1517]: [{text: "Protestant Reformation", link: "https://en.wikipedia.org/wiki/Protestant_Reformation"}],
-            [1776]: [{text: "American Independence", link: "https://en.wikipedia.org/wiki/United_States_Declaration_of_Independence"}],
-            [1789]: [{text: "French Revolution", link: "https://en.wikipedia.org/wiki/French_Revolution"}],
-            [1804]: [{text: "Napoleon Emperor", link: "https://en.wikipedia.org/wiki/Napoleon"}],
-            [1859]: [{text: "Darwin's Origin of Species", link: "https://en.wikipedia.org/wiki/On_the_Origin_of_Species"}],
-            [1914]: [{text: "World War I begins", link: "https://en.wikipedia.org/wiki/World_War_I"}],
-            [1939]: [{text: "World War II begins", link: "https://en.wikipedia.org/wiki/World_War_II"}],
-            [1945]: [
-                {text: "Nuclear bombs", link: "https://en.wikipedia.org/wiki/Atomic_bombings_of_Hiroshima_and_Nagasaki"},
-                {text: "United Nations founded", link: "https://en.wikipedia.org/wiki/United_Nations"}
-            ],
-            [1969]: [{text: "Moon landing", link: "https://en.wikipedia.org/wiki/Apollo_11"}],
-            [1989]: [{text: "Berlin Wall falls", link: "https://en.wikipedia.org/wiki/Fall_of_the_Berlin_Wall"}],
-            [1991]: [{text: "Soviet Union dissolves", link: "https://en.wikipedia.org/wiki/Dissolution_of_the_Soviet_Union"}],
-            [2001]: [
-                {text: "September 11 attacks", link: "https://en.wikipedia.org/wiki/September_11_attacks"},
-                {text: "Wikipedia launched", link: "https://en.wikipedia.org/wiki/Wikipedia"}
-            ],
-            [2020]: [{text: "COVID-19 pandemic", link: "https://en.wikipedia.org/wiki/COVID-19_pandemic"}],
-            
-            // FUTURE EVENTS - Near Term (2025-2050)
-            [2025]: [
-                {text: "Artemis II lunar flyby", link: "https://en.wikipedia.org/wiki/Artemis_2"},
-                {text: "Lunar Gateway initial capabilities", link: "https://en.wikipedia.org/wiki/Lunar_Gateway"}
-            ],
-            [2026]: [
-                {text: "Artemis III lunar landing", link: "https://en.wikipedia.org/wiki/Artemis_3"},
-                {text: "Winter Olympics Milan-Cortina", link: "https://en.wikipedia.org/wiki/2026_Winter_Olympics"}
-            ],
-            [2028]: [{text: "Summer Olympics Los Angeles", link: "https://en.wikipedia.org/wiki/2028_Summer_Olympics"}],
-            [2030]: [
-                {text: "Europa Clipper arrives at Jupiter", link: "https://en.wikipedia.org/wiki/Europa_Clipper"},
-                {text: "Winter Olympics French Alps", link: "https://en.wikipedia.org/wiki/2030_Winter_Olympics"},
-                {text: "China peaks CO2 emissions", link: "https://en.wikipedia.org/wiki/Climate_change_mitigation"}
-            ],
-            [2031]: [{text: "JUICE arrives at Jupiter", link: "https://en.wikipedia.org/wiki/Jupiter_Icy_Moons_Explorer"}],
-            [2032]: [{text: "Summer Olympics Brisbane", link: "https://en.wikipedia.org/wiki/2032_Summer_Olympics"}],
-            [2034]: [
-                {text: "Dragonfly lands on Titan", link: "https://en.wikipedia.org/wiki/Dragonfly_(spacecraft)"},
-                {text: "Winter Olympics Salt Lake City", link: "https://en.wikipedia.org/wiki/2034_Winter_Olympics"}
-            ],
-            [2035]: [
-                {text: "ITER achieves nuclear fusion", link: "https://en.wikipedia.org/wiki/ITER"},
-                {text: "EU bans petrol/diesel cars", link: "https://en.wikipedia.org/wiki/Phase-out_of_fossil_fuel_vehicles"}
-            ],
-            [2040]: [{text: "World population ~9 billion", link: "https://en.wikipedia.org/wiki/World_population"}],
-            
-            // Medium-term Future (2050-3000)
-            [2100]: [{text: "Sea level rise 1-8 meters", link: "https://en.wikipedia.org/wiki/Sea_level_rise"}],
-            [2200]: [{text: "Antarctic ice sheet changes", link: "https://en.wikipedia.org/wiki/West_Antarctic_Ice_Sheet"}],
-            [2500]: [{text: "English language evolution", link: "https://en.wikipedia.org/wiki/Future_of_the_English_language"}],
-            
-            // Astronomical Events
-            [3100]: [{text: "Gamma Cephei becomes pole star", link: "https://en.wikipedia.org/wiki/Pole_star"}],
-            [8000]: [{text: "Current interglacial ends", link: "https://en.wikipedia.org/wiki/Interglacial"}],
-            [25000]: [{text: "Chernobyl exclusion zone safe", link: "https://en.wikipedia.org/wiki/Chernobyl_Exclusion_Zone"}],
-            [50000]: [
-                {text: "Niagara Falls erodes to Lake Erie", link: "https://en.wikipedia.org/wiki/Niagara_Falls"},
-                {text: "Next ice age possible", link: "https://en.wikipedia.org/wiki/Ice_age"}
-            ],
-            [100000]: [{text: "Star constellations unrecognizable", link: "https://en.wikipedia.org/wiki/Constellation"}],
-            [250000]: [{text: "Kamaʻehuakanaloa becomes new island", link: "https://en.wikipedia.org/wiki/Kama%CA%BBehuakanaloa"}],
-            [1000000]: [{text: "Likely supervolcanic eruption", link: "https://en.wikipedia.org/wiki/Supervolcano"}],
-            [1290000]: [{text: "Gliese 710 approaches Solar System", link: "https://en.wikipedia.org/wiki/Gliese_710"}],
-            [10000000]: [{text: "Red Sea floods African continent", link: "https://en.wikipedia.org/wiki/Red_Sea_Rift"}],
-            
-            // Earth's Far Future
-            [600000000]: [{text: "C3 photosynthesis ends", link: "https://en.wikipedia.org/wiki/Future_of_Earth"}],
-            [1000000000]: [
-                {text: "Moist greenhouse effect begins", link: "https://en.wikipedia.org/wiki/Runaway_greenhouse_effect"},
-                {text: "Oceans start evaporating", link: "https://en.wikipedia.org/wiki/Future_of_Earth"}
-            ],
-            [2800000000]: [{text: "Earth's magnetic field ends", link: "https://en.wikipedia.org/wiki/Earth%27s_magnetic_field"}],
-            [5400000000]: [{text: "Sun becomes red giant", link: "https://en.wikipedia.org/wiki/Red_giant"}],
-            [7590000000]: [
-                {text: "Earth likely destroyed by Sun", link: "https://en.wikipedia.org/wiki/Future_of_Earth"},
-                {text: "Sun swallows inner planets", link: "https://en.wikipedia.org/wiki/Stellar_evolution"}
-            ],
-            [8000000000]: [{text: "Sun becomes white dwarf", link: "https://en.wikipedia.org/wiki/White_dwarf"}],
-            
-            // Cosmic Future
-            [1000000000000]: [{text: "Star formation ends in galaxies", link: "https://en.wikipedia.org/wiki/Timeline_of_the_far_future"}],
-            [2000000000000]: [{text: "Local Group isolation complete", link: "https://en.wikipedia.org/wiki/Local_Group"}],
-            [100000000000000]: [{text: "Normal star formation ends", link: "https://en.wikipedia.org/wiki/Stellar_evolution"}],
-            [1000000000000000]: [{text: "Planetary systems detach", link: "https://en.wikipedia.org/wiki/Timeline_of_the_far_future"}],
-            [100000000000000000000]: [{text: "Stellar remnants ejected from galaxies", link: "https://en.wikipedia.org/wiki/Galaxy_formation_and_evolution"}],
-            [1000000000000000000000000000000000000000]: [{text: "Proton decay begins", link: "https://en.wikipedia.org/wiki/Proton_decay"}],
-            [100000000000000000000000000000000000000000000000000000000000000000000000000000000]: [{text: "Heat death of universe", link: "https://en.wikipedia.org/wiki/Heat_death_of_the_universe"}]
-        };
+    getInitialDarkMode() {
+        const saved = localStorage.getItem('time-tourist-dark-mode');
+        if (saved !== null) {
+            return saved === 'true';
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    loadEvents() {
+        try {
+            // Load events from generated JavaScript file
+            if (window.historicalEvents) {
+                this.historicalEvents = window.historicalEvents;
+                console.log('Loaded', Object.keys(this.historicalEvents).length, 'years of events');
+            } else {
+                console.error('Historical events data not loaded - window.historicalEvents is undefined');
+                this.historicalEvents = {};
+            }
+        } catch (error) {
+            console.error('Failed to load events:', error);
+            this.historicalEvents = {};
+        }
     }
 
     connectedCallback() {
-        this.slider = document.getElementById('timeSlider');
-        this.yearDisplay = document.getElementById('yearDisplay');
-        this.eraIndicator = document.getElementById('eraIndicator');
-        this.eventsContainer = document.getElementById('eventsList');
-        this.currentYearAnnouncer = document.getElementById('current-year');
-        this.currentEraAnnouncer = document.getElementById('current-era');
-        
-        this.setDefaultPosition();
+        this.innerHTML = `
+            <a href="#main-content" class="skip-link">Skip to main content</a>
+            
+            <div class="container">
+                <header>
+                    <h1 id="main-heading">Time Tourist</h1>
+                </header>
+                
+                <main id="main-content">
+                    <section class="controls-section" aria-labelledby="controls-heading">
+                        <h2 id="controls-heading" class="sr-only">Time Controls</h2>
+                        
+                        <div class="theme-toggle-container">
+                            <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                                <span class="theme-icon"></span>
+                            </button>
+                        </div>
+                        
+                        <div class="year-display" id="year-display" aria-live="polite" aria-atomic="true">
+                            ${this.formatYear(this.currentYear)}
+                        </div>
+                        
+                        <div class="slider-container" role="region" aria-labelledby="slider-heading">
+                            <h3 id="slider-heading" class="sr-only">Time Navigation Slider</h3>
+                            <input 
+                                type="range" 
+                                min="0" 
+                                max="10000" 
+                                value="${this.yearToPosition(this.currentYear)}" 
+                                class="slider" 
+                                id="time-slider"
+                                aria-label="Navigate through time from Big Bang to Heat Death of Universe"
+                                aria-valuemin="0"
+                                aria-valuemax="10000"
+                                aria-valuenow="${this.yearToPosition(this.currentYear)}"
+                                aria-valuetext="${this.formatYear(this.currentYear)}"
+                            />
+                            <div class="era-indicator" id="era-indicator" aria-live="polite">
+                                ${this.getEraDescription(this.currentYear)}
+                            </div>
+                        </div>
+                        
+                        <div class="navigation-buttons" role="group" aria-labelledby="nav-buttons-heading">
+                            <h3 id="nav-buttons-heading" class="sr-only">Quick Navigation</h3>
+                            <button class="nav-button" id="big-bang-btn" aria-describedby="big-bang-desc">
+                                Big Bang
+                                <span id="big-bang-desc" class="sr-only">Jump to 13.8 billion years ago</span>
+                            </button>
+                            <button class="nav-button" id="now-btn" aria-describedby="now-desc">
+                                Now
+                                <span id="now-desc" class="sr-only">Jump to present day</span>
+                            </button>
+                            <button class="nav-button" id="heat-death-btn" aria-describedby="heat-death-desc">
+                                Heat Death
+                                <span id="heat-death-desc" class="sr-only">Jump to heat death of universe</span>
+                            </button>
+                        </div>
+                    </section>
+                    
+                    <section class="events-container" role="region" aria-labelledby="events-heading" tabindex="0">
+                        <h2 id="events-heading">Historical Events</h2>
+                        <div class="events-list" id="events-list" role="list">
+                            ${this.getEventsHTML(this.currentYear)}
+                        </div>
+                        <div aria-live="polite" aria-atomic="false" class="sr-only" id="events-announcer"></div>
+                    </section>
+                </main>
+            </div>
+        `;
+
+        this.setupElements();
         this.setupEventListeners();
         this.setupKeyboardNavigation();
+        this.applyTheme();
+        this.throttledAnnounce = this.throttle((message) => {
+            const announcer = this.querySelector('#events-announcer');
+            if (announcer) {
+                announcer.textContent = message;
+            }
+        }, 1000);
+        
+        this.updateDisplay();
+    }
+
+    setupElements() {
+        this.slider = this.querySelector('#time-slider');
+        this.yearDisplay = this.querySelector('#year-display');
+        this.eraIndicator = this.querySelector('#era-indicator');
+        this.eventsContainer = this.querySelector('#events-list');
     }
 
     setupEventListeners() {
-        this.slider.addEventListener('input', (e) => this.updateYear(e.target.value));
-        this.slider.addEventListener('change', (e) => this.updateYear(e.target.value));
-        
-        // Add click handlers for navigation buttons
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const targetYear = parseFloat(button.dataset.year);
-                this.jumpToYear(targetYear);
-            });
+        // Slider input
+        this.slider.addEventListener('input', (e) => {
+            this.currentYear = this.positionToYear(parseInt(e.target.value));
+            this.updateDisplay();
         });
-        
-        // Events list keyboard navigation
-        this.eventsContainer.addEventListener('keydown', (e) => {
-            this.handleEventsKeydown(e);
+
+        // Navigation buttons
+        this.querySelector('#big-bang-btn').addEventListener('click', () => {
+            this.jumpToYear(-13800000000);
+        });
+
+        this.querySelector('#now-btn').addEventListener('click', () => {
+            this.jumpToYear(2025);
+        });
+
+        this.querySelector('#heat-death-btn').addEventListener('click', () => {
+            this.jumpToYear(1e80);
+        });
+
+        // Theme toggle
+        this.querySelector('.theme-toggle').addEventListener('click', () => {
+            this.toggleTheme();
+        });
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (localStorage.getItem('time-tourist-dark-mode') === null) {
+                this.darkMode = e.matches;
+                this.applyTheme();
+            }
         });
     }
 
     setupKeyboardNavigation() {
         this.slider.addEventListener('keydown', (e) => {
             let handled = false;
-            const currentValue = parseInt(this.slider.value);
+            const currentPosition = parseInt(this.slider.value);
             
             switch(e.key) {
                 case 'Home':
-                    this.jumpToYear(-13800000000); // Big Bang
+                    this.jumpToYear(-13800000000);
                     handled = true;
                     break;
                 case 'End':
-                    this.jumpToYear(1e78); // Heat Death
+                    this.jumpToYear(1e80);
                     handled = true;
                     break;
                 case 'PageUp':
-                    this.slider.value = Math.min(10000, currentValue + 100);
-                    this.updateYear(this.slider.value);
+                    this.slider.value = Math.min(10000, currentPosition + 100);
+                    this.currentYear = this.positionToYear(parseInt(this.slider.value));
+                    this.updateDisplay();
                     handled = true;
                     break;
                 case 'PageDown':
-                    this.slider.value = Math.max(0, currentValue - 100);
-                    this.updateYear(this.slider.value);
+                    this.slider.value = Math.max(0, currentPosition - 100);
+                    this.currentYear = this.positionToYear(parseInt(this.slider.value));
+                    this.updateDisplay();
                     handled = true;
                     break;
-                case 'n':
-                case 'N':
-                    if (e.ctrlKey || e.metaKey) {
-                        this.jumpToYear(2025); // Now
+                default:
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                        e.preventDefault();
+                        this.jumpToYear(2025);
                         handled = true;
                     }
                     break;
@@ -292,429 +198,370 @@ class TimeSlider extends HTMLElement {
             
             if (handled) {
                 e.preventDefault();
-                e.stopPropagation();
             }
         });
+
+        // Events list keyboard navigation
+        const eventsList = this.querySelector('#events-list');
+        eventsList.addEventListener('keydown', this.handleEventsKeydown.bind(this));
     }
 
     handleEventsKeydown(e) {
-        const eventItems = this.eventsContainer.querySelectorAll('.event-item');
-        if (eventItems.length === 0) return;
+        const eventItems = Array.from(this.querySelectorAll('.event-item[tabindex="0"]'));
+        const currentIndex = eventItems.findIndex(item => item === e.target);
         
-        const currentFocus = document.activeElement;
-        let currentIndex = Array.from(eventItems).findIndex(item => 
-            item === currentFocus || item.contains(currentFocus)
-        );
+        let targetIndex = currentIndex;
         
         switch(e.key) {
             case 'ArrowDown':
-                e.preventDefault();
-                currentIndex = (currentIndex + 1) % eventItems.length;
-                eventItems[currentIndex].focus();
+                targetIndex = Math.min(eventItems.length - 1, currentIndex + 1);
                 break;
             case 'ArrowUp':
-                e.preventDefault();
-                currentIndex = currentIndex <= 0 ? eventItems.length - 1 : currentIndex - 1;
-                eventItems[currentIndex].focus();
+                targetIndex = Math.max(0, currentIndex - 1);
                 break;
             case 'Home':
-                e.preventDefault();
-                eventItems[0].focus();
+                targetIndex = 0;
                 break;
             case 'End':
-                e.preventDefault();
-                eventItems[eventItems.length - 1].focus();
+                targetIndex = eventItems.length - 1;
                 break;
+            default:
+                return;
+        }
+        
+        if (targetIndex !== currentIndex && eventItems[targetIndex]) {
+            e.preventDefault();
+            eventItems[targetIndex].focus();
+        }
+    }
+
+    toggleTheme() {
+        this.darkMode = !this.darkMode;
+        localStorage.setItem('time-tourist-dark-mode', this.darkMode.toString());
+        this.applyTheme();
+    }
+
+    applyTheme() {
+        document.body.classList.toggle('dark-mode', this.darkMode);
+        const themeIcon = this.querySelector('.theme-icon');
+        if (themeIcon) {
+            themeIcon.textContent = this.darkMode ? '☀️' : '🌙';
         }
     }
 
     jumpToYear(year) {
-        const position = this.yearToPosition(year);
-        this.slider.value = Math.round(position);
-        this.updateYear(this.slider.value);
-        
-        // Announce the jump to screen readers
-        const formattedYear = this.formatYear(year);
-        const era = this.getEraDescription(year);
-        this.announceToScreenReader(`Jumped to ${formattedYear}, ${era}`);
-        
-        // Focus the slider after jump
+        this.currentYear = year;
+        this.slider.value = this.yearToPosition(year);
+        this.updateDisplay();
         this.slider.focus();
     }
 
-    // Convert slider position (0-10000) to year
-    positionToYear(position) {
-        const pos = position / 10000; // Normalize to 0-1
+    updateDisplay() {
+        this.yearDisplay.innerHTML = this.formatYear(this.currentYear);
+        this.eraIndicator.textContent = this.getEraDescription(this.currentYear);
+        this.eventsContainer.innerHTML = this.getEventsHTML(this.currentYear);
         
-        if (pos < 0.1) {
-            // Deep BCE (0-10%): -13.8 billion to -25,000 years (logarithmic)
-            const progress = pos / 0.1;
-            const maxLog = Math.log10(13.8e9);
-            const minLog = Math.log10(25000);
-            const logValue = maxLog - (progress * (maxLog - minLog));
-            return -Math.pow(10, logValue);
-        } else if (pos < 0.25) {
-            // Recent BCE (10-25%): -25,000 to -3,000 years (linear for detail)
-            const progress = (pos - 0.1) / 0.15;
-            return -25000 + (progress * 22000);
-        } else if (pos < 0.75) {
-            // History (25-75%): -3,000 to 3,000 years (linear for detail)
-            const progress = (pos - 0.25) / 0.5;
-            return -3000 + (progress * 6000);
-        } else if (pos < 0.9) {
-            // Future CE (75-90%): 3,000 to 25,000 years (logarithmic)
-            const progress = (pos - 0.75) / 0.15;
-            const minLog = Math.log10(3000);
-            const maxLog = Math.log10(25000);
-            const logValue = minLog + (progress * (maxLog - minLog));
-            return Math.pow(10, logValue);
-        } else {
-            // Far Future CE (90-100%): 25,000 to 10^78 years (logarithmic)
-            const progress = (pos - 0.9) / 0.1;
-            if (progress >= 0.999) {
-                return 1e78;
+        // Update slider attributes for accessibility
+        this.slider.setAttribute('aria-valuenow', this.yearToPosition(this.currentYear));
+        this.slider.setAttribute('aria-valuetext', this.formatYear(this.currentYear));
+        
+        // Update year display classes for font sizing
+        this.updateYearDisplayClasses();
+        
+        // Announce changes to screen readers (throttled)
+        const announcement = `Time: ${this.formatYear(this.currentYear)}. Era: ${this.getEraDescription(this.currentYear)}`;
+        this.throttledAnnounce(announcement);
+    }
+
+    updateYearDisplayClasses() {
+        const yearStr = this.formatYear(this.currentYear);
+        this.yearDisplay.className = 'year-display';
+        
+        if (yearStr.length > 25) {
+            this.yearDisplay.classList.add('extremely-large-number');
+        } else if (yearStr.length > 20) {
+            this.yearDisplay.classList.add('very-large-number');
+        } else if (yearStr.length > 15) {
+            this.yearDisplay.classList.add('large-number');
+        }
+    }
+
+    throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
             }
-            const minLog = Math.log10(25000);
-            const maxLog = 78;
-            const logValue = minLog + (progress * (maxLog - minLog));
+        };
+    }
+
+    // Logarithmic scale mapping functions
+    positionToYear(position) {
+        const p = position / 10000;
+        
+        if (p <= 0.10) {
+            // Deep BCE: -13.8B to -25,000 (logarithmic)
+            const logMin = Math.log10(25000);
+            const logMax = Math.log10(13800000000);
+            const logValue = logMin + (logMax - logMin) * (0.10 - p) / 0.10;
+            return -Math.pow(10, logValue);
+        } else if (p <= 0.25) {
+            // Recent BCE: -25,000 to -3,000 (linear)
+            const t = (p - 0.10) / 0.15;
+            return -25000 + t * 22000;
+        } else if (p <= 0.75) {
+            // History: -3,000 to 3,000 (linear)
+            const t = (p - 0.25) / 0.50;
+            return -3000 + t * 6000;
+        } else if (p <= 0.90) {
+            // Future CE: 3,000 to 25,000 (logarithmic)
+            const t = (p - 0.75) / 0.15;
+            const logMin = Math.log10(3000);
+            const logMax = Math.log10(25000);
+            const logValue = logMin + t * (logMax - logMin);
+            return Math.pow(10, logValue);
+        } else {
+            // Far Future CE: 25,000 to 10^80 (logarithmic)
+            const t = (p - 0.90) / 0.10;
+            const logMin = Math.log10(25000);
+            const logMax = 80;
+            const logValue = logMin + t * (logMax - logMin);
             return Math.pow(10, logValue);
         }
     }
 
-    // Convert year to slider position (0-10000)
     yearToPosition(year) {
-        if (year < -25000) {
-            // Deep BCE (0-10%): -13.8 billion to -25,000 years
-            const absYear = Math.abs(year);
-            const maxLog = Math.log10(13.8e9);
-            const minLog = Math.log10(25000);
-            const yearLog = Math.log10(absYear);
-            const progress = (maxLog - yearLog) / (maxLog - minLog);
-            return (progress * 0.1) * 10000;
-        } else if (year < -3000) {
-            // Recent BCE (10-25%): -25,000 to -3,000 years
-            const progress = (year + 25000) / 22000;
-            return ((0.1 + progress * 0.15) * 10000);
+        if (year <= -25000) {
+            // Deep BCE
+            const logMin = Math.log10(25000);
+            const logMax = Math.log10(13800000000);
+            const logValue = Math.log10(Math.abs(year));
+            const t = (logValue - logMin) / (logMax - logMin);
+            return (0.10 - t * 0.10) * 10000;
+        } else if (year <= -3000) {
+            // Recent BCE
+            const t = (-25000 - year) / 22000;
+            return (0.10 + t * 0.15) * 10000;
         } else if (year <= 3000) {
-            // History (25-75%): -3,000 to 3,000 years
-            const progress = (year + 3000) / 6000;
-            return ((0.25 + progress * 0.5) * 10000);
+            // History
+            const t = (year + 3000) / 6000;
+            return (0.25 + t * 0.50) * 10000;
         } else if (year <= 25000) {
-            // Future CE (75-90%): 3,000 to 25,000 years
-            const minLog = Math.log10(3000);
-            const maxLog = Math.log10(25000);
-            const yearLog = Math.log10(year);
-            const progress = (yearLog - minLog) / (maxLog - minLog);
-            return ((0.75 + progress * 0.15) * 10000);
+            // Future CE
+            const logMin = Math.log10(3000);
+            const logMax = Math.log10(25000);
+            const logValue = Math.log10(year);
+            const t = (logValue - logMin) / (logMax - logMin);
+            return (0.75 + t * 0.15) * 10000;
         } else {
-            // Far Future CE (90-100%): 25,000 to 10^78 years
-            const minLog = Math.log10(25000);
-            const maxLog = 78;
-            const yearLog = Math.log10(year);
-            const progress = (yearLog - minLog) / (maxLog - minLog);
-            return ((0.9 + progress * 0.1) * 10000);
+            // Far Future CE
+            const logMin = Math.log10(25000);
+            const logMax = 80;
+            const logValue = Math.log10(year);
+            const t = (logValue - logMin) / (logMax - logMin);
+            return (0.90 + t * 0.10) * 10000;
         }
-    }
-
-    setDefaultPosition() {
-        const position = this.yearToPosition(this.currentYear);
-        this.slider.value = Math.round(position);
-        this.updateYear(this.slider.value);
     }
 
     formatYear(year) {
+        // Round year to eliminate floating point precision issues
         const roundedYear = Math.round(year);
         
-        if (roundedYear === 0) {
-            return "0";
+        if (Math.abs(roundedYear) < 10000) {
+            return roundedYear < 0 ? `${Math.abs(roundedYear)} BCE` : `${roundedYear} CE`;
         }
         
         const absYear = Math.abs(roundedYear);
+        const formatted = this.formatLargeNumber(absYear);
         
-        // Recent history/future: use BCE/CE with actual numbers (no commas for small numbers)
-        if (absYear <= 10000) {
-            if (roundedYear < 0) {
-                return `${absYear} BCE`;
-            } else {
-                return `${roundedYear} CE`;
-            }
-        }
-        
-        // Deeper history: use "years ago"
-        if (roundedYear < -10000) {
-            const formatted = this.formatLargeNumber(absYear);
-            const suffix = "years ago";
-            // For extremely large numbers, show both named and actual number
-            if (absYear >= 1e15) {
-                return `${formatted} ${suffix}<br><span style="font-size: 0.6em; opacity: 0.8;">(${absYear.toLocaleString()})</span>`;
-            } else {
-                return `${formatted} ${suffix}`;
-            }
-        }
-        
-        // Deeper future: use "years from now"
-        if (roundedYear > 10000) {
-            const formatted = this.formatLargeNumber(roundedYear);
-            const suffix = "years from now";
-            // For extremely large numbers, show both named and actual number
-            if (roundedYear >= 1e15) {
-                return `${formatted} ${suffix}<br><span style="font-size: 0.6em; opacity: 0.8;">(${roundedYear.toLocaleString()})</span>`;
-            } else {
-                return `${formatted} ${suffix}`;
-            }
+        if (roundedYear < 0) {
+            return `${formatted} years ago`;
+        } else {
+            return `${formatted} years from now`;
         }
     }
 
     formatLargeNumber(num) {
-        if (num < 1000) {
-            return num.toLocaleString();
+        if (num < 1000) return num.toString();
+        if (num < 1000000) {
+            const thousands = num / 1000;
+            return thousands % 1 === 0 ? `${thousands.toFixed(0)} thousand` : `${thousands.toFixed(1)} thousand`;
+        }
+        if (num < 1000000000) {
+            const millions = num / 1000000;
+            return millions % 1 === 0 ? `${millions.toFixed(0)} million` : `${millions.toFixed(1)} million`;
+        }
+        if (num < 1000000000000) {
+            const billions = num / 1000000000;
+            return billions % 1 === 0 ? `${billions.toFixed(0)} billion` : `${billions.toFixed(1)} billion`;
+        }
+        if (num < 1000000000000000) {
+            const trillions = num / 1000000000000;
+            return trillions % 1 === 0 ? `${trillions.toFixed(0)} trillion` : `${trillions.toFixed(1)} trillion`;
         }
         
-        // For clean thousands/millions, show actual number instead of decimal
-        if (num >= 1000 && num < 1e6) {
-            if (num % 1000 === 0) {
-                return num.toLocaleString(); // Show "2000" instead of "2.0 thousand"
-            }
-            return `${(num / 1000).toFixed(1)} thousand`;
-        } else if (num >= 1e6 && num < 1e9) {
-            if (num % 1e6 === 0) {
-                return num.toLocaleString(); // Show "2000000" instead of "2.0 million"
-            }
-            return `${(num / 1e6).toFixed(1)} million`;
-        } else if (num < 1e12) {
-            return `${(num / 1e9).toFixed(1)} billion`;
-        } else if (num < 1e15) {
-            return `${(num / 1e12).toFixed(1)} trillion`;
-        } else if (num < 1e18) {
-            return `${(num / 1e15).toFixed(1)} quadrillion`;
-        } else if (num < 1e21) {
-            return `${(num / 1e18).toFixed(1)} quintillion`;
-        } else if (num < 1e24) {
-            return `${(num / 1e21).toFixed(1)} sextillion`;
-        } else if (num < 1e27) {
-            return `${(num / 1e24).toFixed(1)} septillion`;
-        } else if (num < 1e30) {
-            return `${(num / 1e27).toFixed(1)} octillion`;
-        } else if (num < 1e33) {
-            return `${(num / 1e30).toFixed(1)} nonillion`;
-        } else if (num < 1e36) {
-            return `${(num / 1e33).toFixed(1)} decillion`;
-        } else if (num < 1e39) {
-            return `${(num / 1e36).toFixed(1)} undecillion`;
-        } else if (num < 1e42) {
-            return `${(num / 1e39).toFixed(1)} duodecillion`;
+        // For very large numbers, show both named and scientific notation
+        const exponent = Math.floor(Math.log10(num));
+        const mantissa = num / Math.pow(10, exponent);
+        const namedNumber = this.getNamedLargeNumber(exponent);
+        
+        if (namedNumber && mantissa === 1) {
+            return `1 ${namedNumber} (10^${exponent})`;
+        } else if (namedNumber) {
+            return `${mantissa.toFixed(1)} ${namedNumber} (${num.toExponential(1)})`;
         } else {
-            // For extremely large numbers, use creative naming
-            const exponent = Math.floor(Math.log10(num));
-            if (exponent >= 60 && exponent < 78) {
-                const billions = Math.floor(exponent / 9);
-                const remainder = exponent % 9;
-                const mantissa = (num / Math.pow(10, exponent)).toFixed(1);
-                const baseNames = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion'];
-                let description = '';
-                for (let i = 0; i < billions; i++) {
-                    description += 'billion ';
-                }
-                if (remainder > 0) {
-                    description += baseNames[remainder] + ' ';
-                }
-                return `${mantissa} ${description.trim()}`;
-            } else if (exponent >= 78) {
-                // Special case for heat death of universe scale
-                return `1 googol googol googol googol googol googol googol googol`;
-            } else {
-                const mantissa = (num / Math.pow(10, 42)).toFixed(1);
-                return `${mantissa} tredecillion`;
-            }
+            return num.toExponential(1);
         }
     }
 
-    getNumberClass(year) {
-        const absYear = Math.abs(year);
-        if (absYear >= 1e20) return 'extremely-large-number';
-        if (absYear >= 1e12) return 'very-large-number';
-        if (absYear >= 1e8) return 'large-number';
-        return '';
+    getNamedLargeNumber(exponent) {
+        const names = {
+            15: 'quadrillion', 18: 'quintillion', 21: 'sextillion',
+            24: 'septillion', 27: 'octillion', 30: 'nonillion',
+            33: 'decillion', 36: 'undecillion', 39: 'duodecillion'
+        };
+        return names[exponent] || null;
     }
 
     getEraDescription(year) {
-        // Deep cosmic history
-        if (year < -13e9) return "Before the Big Bang";
-        if (year < -10e9) return "Primordial Universe";
-        if (year < -4.6e9) return "Formation of Solar System";
-        if (year < -4e9) return "Hadean Eon";
-        if (year < -2.5e9) return "Archean Eon";
-        if (year < -541e6) return "Proterozoic Eon";
-        
-        // Phanerozoic Eon
-        if (year < -252e6) return "Paleozoic Era";
-        if (year < -66e6) return "Mesozoic Era (Age of Dinosaurs)";
-        if (year < -2.6e6) return "Cenozoic Era";
-        
-        // Quaternary Period
-        if (year < -11700) return "Pleistocene (Ice Age)";
-        if (year < -8000) return "Holocene (Early)";
-        if (year < -5000) return "Neolithic Period";
-        if (year < -3200) return "Bronze Age";
-        if (year < -1200) return "Late Bronze Age";
-        if (year < -600) return "Iron Age";
-        if (year < -500) return "Axial Age";
-        if (year < 0) return "Classical Antiquity";
-        
-        // Common Era
-        if (year < 500) return "Late Antiquity";
-        if (year < 1000) return "Early Middle Ages";
-        if (year < 1300) return "High Middle Ages";
-        if (year < 1500) return "Late Middle Ages";
-        if (year < 1800) return "Early Modern Period";
-        if (year < 1914) return "Long 19th Century";
-        if (year < 1945) return "World Wars Era";
-        if (year < 1991) return "Cold War Era";
-        if (year < 2020) return "Information Age";
-        if (year < 3000) return "Present Era";
-        
-        // Future eras
-        if (year < 1e4) return "Near Future";
-        if (year < 1e6) return "Distant Future";
-        if (year < 1e9) return "Stellar Evolution";
-        if (year < 1e12) return "Galactic Evolution";
-        if (year < 1e15) return "Degenerate Era";
-        if (year < 1e40) return "Black Hole Era";
-        return "Heat Death Era";
+        if (year <= -4600000000) return "Formation of Solar System";
+        if (year <= -4000000000) return "Hadean Eon - Early Earth";
+        if (year <= -2500000000) return "Archean Eon - First Life";
+        if (year <= -541000000) return "Proterozoic Eon - Complex Cells";
+        if (year <= -252000000) return "Paleozoic Era - Life on Land";
+        if (year <= -66000000) return "Mesozoic Era - Age of Dinosaurs";
+        if (year <= -2600000) return "Cenozoic Era - Age of Mammals";
+        if (year <= -10000) return "Stone Age - Hunter-Gatherers";
+        if (year <= -3000) return "Bronze Age - Early Civilizations";
+        if (year <= 500) return "Classical Antiquity";
+        if (year <= 1500) return "Medieval Period";
+        if (year <= 1800) return "Renaissance & Early Modern";
+        if (year <= 1900) return "Industrial Revolution";
+        if (year <= 2000) return "Modern Era";
+        if (year <= 2100) return "Present Day & Near Future";
+        if (year <= 10000) return "Near Future - Climate & Technology";
+        if (year <= 1000000) return "Distant Future - Geological Changes";
+        if (year <= 1000000000) return "Far Future - Biological Evolution";
+        if (year <= 5000000000) return "Astronomical Future - Stellar Evolution";
+        return "Ultimate Future - Heat Death";
     }
 
-    findRelevantEvents(currentYear) {
-        const events = [];
-        const eventYears = Object.keys(this.historicalEvents).map(Number).sort((a, b) => a - b);
+    getEventsHTML(year) {
+        const allEvents = [];
         
-        // Find events within a reasonable range based on the current year
-        let rangeSize;
-        const absYear = Math.abs(currentYear);
-        
-        if (absYear > 1e9) rangeSize = absYear * 0.1; // 10% range for very large years
-        else if (absYear > 1e6) rangeSize = absYear * 0.05; // 5% range for large years
-        else if (absYear > 10000) rangeSize = absYear * 0.02; // 2% range for medium years
-        else if (absYear > 1000) rangeSize = 500; // 500 year range for historical periods
-        else rangeSize = 100; // 100 year range for recent history
-        
-        const minYear = currentYear - rangeSize;
-        const maxYear = currentYear + rangeSize;
-        
-        for (const eventYear of eventYears) {
-            if (eventYear >= minYear && eventYear <= maxYear) {
-                events.push({
-                    year: eventYear,
-                    events: this.historicalEvents[eventYear]
-                });
-            }
-        }
-        
-        // If no events found in range, find the closest events
-        if (events.length === 0) {
-            const closestBefore = eventYears.filter(year => year <= currentYear).pop();
-            const closestAfter = eventYears.find(year => year > currentYear);
+        // First, collect ALL events with their distances from current year
+        Object.keys(this.historicalEvents).forEach(eventYear => {
+            const numYear = parseFloat(eventYear);
+            const distance = Math.abs(numYear - year);
             
-            if (closestBefore !== undefined) {
-                events.push({
-                    year: closestBefore,
-                    events: this.historicalEvents[closestBefore]
+            this.historicalEvents[eventYear].forEach(event => {
+                allEvents.push({
+                    year: numYear,
+                    distance: distance,
+                    ...event
                 });
-            }
-            if (closestAfter !== undefined && closestAfter !== closestBefore) {
-                events.push({
-                    year: closestAfter,
-                    events: this.historicalEvents[closestAfter]
-                });
-            }
+            });
+        });
+        
+        // Sort chronologically by year
+        allEvents.sort((a, b) => a.year - b.year);
+        
+        // Get tolerance for this time period
+        const tolerance = this.getYearTolerance(year);
+        const maxEvents = 5;
+        
+        // Filter events within tolerance
+        let eventsToShow = allEvents.filter(event => event.distance <= tolerance).slice(0, maxEvents);
+        
+        // If no events within tolerance, find and show the closest event
+        if (eventsToShow.length === 0 && allEvents.length > 0) {
+            // Find the closest event by distance
+            const closestEvent = allEvents.reduce((closest, current) => 
+                current.distance < closest.distance ? current : closest
+            );
+            eventsToShow = [closestEvent];
         }
         
-        return events.sort((a, b) => a.year - b.year);
-    }
-
-    displayEvents(events) {
-        if (!this.eventsContainer) return;
-        
-        if (events.length === 0) {
-            this.eventsContainer.innerHTML = '<div role="listitem" style="text-align: center; opacity: 0.7; padding: 2rem;" tabindex="0">No major events recorded for this time period</div>';
-            return;
-        }
-        
-        let html = '';
-        for (const eventGroup of events) {
-            const formattedYear = this.formatYear(eventGroup.year);
-            html += `<div class="event-item" role="listitem" tabindex="0" aria-label="Events from ${formattedYear}">
-                <div class="event-year" aria-hidden="true">${formattedYear}</div>
-                <div class="event-description">`;
+        return eventsToShow.map((event, index) => {
+            // Show distance indicator for events far from current year
+            let yearLabel = this.formatYear(event.year);
             
-            for (const event of eventGroup.events) {
-                if (typeof event === 'string') {
-                    // Handle old format for backward compatibility
-                    html += `• ${event}<br>`;
-                } else {
-                    // Handle new format with links
-                    html += `• <a href="${event.link}" target="_blank" rel="noopener" aria-label="${event.text} (opens in new window)">${event.text}</a><br>`;
+            // Add distance indicator for very distant events
+            if (Math.abs(year) >= 10000 || event.distance > tolerance) {
+                const distanceLabel = this.formatLargeNumber(event.distance);
+                if (event.year < year) {
+                    yearLabel += ` <span class="event-distance">(${distanceLabel} earlier)</span>`;
+                } else if (event.year > year) {
+                    yearLabel += ` <span class="event-distance">(${distanceLabel} later)</span>`;
                 }
             }
-            
-            html += `</div></div>`;
-        }
-        
-        this.eventsContainer.innerHTML = html;
-        
-        // Set up tabindex for keyboard navigation
-        const eventItems = this.eventsContainer.querySelectorAll('.event-item');
-        eventItems.forEach((item, index) => {
-            item.setAttribute('tabindex', '0');
-        });
+                
+            return `
+                <div class="event-item" role="listitem" tabindex="0" aria-describedby="event-${index}">
+                    <div class="event-year">${yearLabel}</div>
+                    <div class="event-description" id="event-${index}">
+                        <a href="${event.link}" target="_blank" rel="noopener noreferrer">${event.text}</a>
+                        ${event.media ? this.getMediaHTML(event.media, index) : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
-    updateYear(position) {
-        const year = this.positionToYear(position);
-        const formattedYear = this.formatYear(year);
-        const era = this.getEraDescription(year);
+    getMediaHTML(media, index) {
+        if (!media.youtube) return '';
         
-        this.yearDisplay.innerHTML = formattedYear;
-        this.yearDisplay.className = `year-display ${this.getNumberClass(year)}`;
-        this.eraIndicator.textContent = era;
+        const youtubeId = this.extractYouTubeId(media.youtube.url);
+        if (!youtubeId) return '';
         
-        // Update ARIA attributes
-        this.slider.setAttribute('aria-valuetext', `${formattedYear}, ${era}`);
-        
-        // Announce changes to screen readers (throttled)
-        this.throttledAnnounce(formattedYear, era);
-        
-        // Display relevant events
-        const relevantEvents = this.findRelevantEvents(year);
-        this.displayEvents(relevantEvents);
+        return `
+            <button class="media-toggle" onclick="this.parentElement.querySelector('.media-content').classList.toggle('expanded'); this.querySelector('.media-toggle-icon').textContent = this.parentElement.querySelector('.media-content').classList.contains('expanded') ? '▼' : '▶';" aria-expanded="false">
+                <span class="media-toggle-icon">▶</span>
+                Watch Video
+            </button>
+            <div class="media-content">
+                <div class="media-tabs">
+                    <button class="media-tab active" onclick="this.parentElement.parentElement.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active')); this.classList.add('active'); this.parentElement.parentElement.querySelectorAll('.media-panel').forEach(p => p.classList.remove('active')); this.parentElement.parentElement.querySelector('.youtube-panel').classList.add('active');">
+                        YouTube
+                    </button>
+                </div>
+                <div class="media-panel youtube-panel active">
+                    <iframe class="youtube-embed" 
+                        src="https://www.youtube-nocookie.com/embed/${youtubeId}" 
+                        title="${media.youtube.title}"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        `;
     }
 
-    throttledAnnounce(year, era) {
-        clearTimeout(this.announceTimeout);
-        this.announceTimeout = setTimeout(() => {
-            if (this.currentYearAnnouncer) {
-                this.currentYearAnnouncer.textContent = year;
-            }
-            if (this.currentEraAnnouncer) {
-                this.currentEraAnnouncer.textContent = era;
-            }
-        }, 500); // Throttle announcements to avoid spam
+    extractYouTubeId(url) {
+        const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
     }
 
-    announceToScreenReader(message) {
-        if (this.currentYearAnnouncer) {
-            this.currentYearAnnouncer.textContent = message;
-            // Clear after announcement
-            setTimeout(() => {
-                this.currentYearAnnouncer.textContent = '';
-            }, 1000);
-        }
+    getYearTolerance(year) {
+        const absYear = Math.abs(year);
+        // Ultra-conservative tolerances to prevent absurd time mismatches
+        if (absYear > 1e50) return 0; // No events for truly cosmic scales
+        if (absYear > 1e20) return absYear * 0.0000001; // Basically nothing matches
+        if (absYear > 1e15) return absYear * 0.000001;
+        if (absYear > 1e12) return absYear * 0.00001;
+        if (absYear > 1e9) return absYear * 0.0001;
+        if (absYear > 1e6) return absYear * 0.001;
+        if (absYear > 1e5) return 5000;
+        if (absYear > 1e4) return 1000;
+        if (absYear > 3000) return 500;
+        return 100;
     }
 }
 
-// Initialize the time slider component
+// Register the custom element
 customElements.define('time-slider', TimeSlider);
-
-// Create and initialize the component
-document.addEventListener('DOMContentLoaded', () => {
-    new TimeSlider().connectedCallback();
-});

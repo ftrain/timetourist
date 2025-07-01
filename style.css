@@ -2,15 +2,202 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 2rem;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    color: white;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+    color: #1a1a1a;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     font-size: 1rem;
     line-height: 1.5;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-container {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    z-index: 100;
+}
+
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.1);
+}
+
+.theme-toggle:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+}
+
+/* Light mode theme toggle */
+body:not(.dark-mode) .theme-toggle {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: #1a1a1a;
+}
+
+body:not(.dark-mode) .theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Light mode component styles */
+body:not(.dark-mode) h1 {
+    color: #1a1a1a;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body:not(.dark-mode) .subtitle {
+    color: rgba(26, 26, 26, 0.8);
+}
+
+body:not(.dark-mode) .year-display {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #1a1a1a;
+    text-shadow: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+body:not(.dark-mode) .slider-container {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+body:not(.dark-mode) .nav-button {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #1a1a1a;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+body:not(.dark-mode) .nav-button:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+body:not(.dark-mode) .nav-button:focus {
+    outline-color: #4a90e2;
+}
+
+body:not(.dark-mode) .events-container {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+body:not(.dark-mode) .events-container h2 {
+    color: #4a90e2;
+}
+
+body:not(.dark-mode) .event-item {
+    background: rgba(255, 255, 255, 0.6);
+    border-left-color: #4a90e2;
+}
+
+body:not(.dark-mode) .event-item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-left-color: #357abd;
+}
+
+body:not(.dark-mode) .event-item:focus {
+    background: rgba(255, 255, 255, 0.9);
+    border-left-color: #357abd;
+}
+
+body:not(.dark-mode) .event-year {
+    color: #4a90e2;
+}
+
+body:not(.dark-mode) .event-description a {
+    color: #357abd;
+    border-bottom-color: rgba(74, 144, 226, 0.5);
+}
+
+body:not(.dark-mode) .event-description a:hover {
+    color: #1a1a1a;
+    border-bottom-color: #1a1a1a;
+    background: rgba(74, 144, 226, 0.1);
+}
+
+body:not(.dark-mode) .event-description a:focus {
+    background: rgba(74, 144, 226, 0.2);
+    color: #1a1a1a;
+}
+
+body:not(.dark-mode) .media-toggle {
+    background: rgba(74, 144, 226, 0.2);
+    border-color: rgba(74, 144, 226, 0.4);
+    color: #357abd;
+}
+
+body:not(.dark-mode) .media-toggle:hover {
+    background: rgba(74, 144, 226, 0.3);
+    border-color: rgba(74, 144, 226, 0.6);
+    color: #1a1a1a;
+}
+
+body:not(.dark-mode) .media-content {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(74, 144, 226, 0.3);
+}
+
+body:not(.dark-mode) .media-tab {
+    color: rgba(74, 144, 226, 0.7);
+}
+
+body:not(.dark-mode) .media-tab.active {
+    color: #357abd;
+    border-bottom-color: #357abd;
+}
+
+body:not(.dark-mode) .media-tab:hover {
+    color: #1a1a1a;
+    background: rgba(74, 144, 226, 0.1);
+}
+
+body:not(.dark-mode) .play-button {
+    background: #4a90e2;
+    color: white;
+}
+
+body:not(.dark-mode) .play-button:hover {
+    background: #357abd;
+}
+
+body:not(.dark-mode) .audio-progress {
+    background: rgba(74, 144, 226, 0.3);
+}
+
+body:not(.dark-mode) .audio-progress-bar {
+    background: #4a90e2;
+}
+
+body:not(.dark-mode) .audio-time {
+    color: rgba(26, 26, 26, 0.8);
 }
 
 /* Respect user's font size preferences */
@@ -73,9 +260,10 @@ body {
 }
 
 .container {
-    max-width: 1000px;
     width: 100%;
+    margin: 0 auto;
     text-align: center;
+    padding: 0 1rem;
 }
 
 h1 {
@@ -303,6 +491,49 @@ h1 {
     line-height: 1.3;
 }
 
+/* Event distance indicator */
+.event-distance {
+    font-size: 0.8em;
+    opacity: 0.6;
+    font-style: italic;
+    font-weight: normal;
+}
+
+/* No events message */
+.no-events {
+    text-align: center;
+    opacity: 0.7;
+    font-style: italic;
+    padding: 2rem;
+    font-size: 0.95rem;
+}
+
+/* Closest event styling */
+.closest-event {
+    opacity: 0.85;
+    border-left-color: rgba(135, 206, 235, 0.6);
+}
+
+.closest-event .event-year {
+    color: rgba(72, 219, 251, 0.8);
+    font-style: italic;
+}
+
+/* Light mode event distance indicator */
+body:not(.dark-mode) .event-distance {
+    opacity: 0.5;
+}
+
+/* Light mode closest event styling */
+body:not(.dark-mode) .closest-event {
+    opacity: 0.85;
+    border-left-color: rgba(74, 144, 226, 0.6);
+}
+
+body:not(.dark-mode) .closest-event .event-year {
+    color: rgba(74, 144, 226, 0.8);
+}
+
 .event-description a {
     color: #87ceeb;
     text-decoration: none;
@@ -343,4 +574,346 @@ h1 {
 
 .events-container::-webkit-scrollbar-thumb:hover {
     background: rgba(255,255,255,0.5);
+}
+
+/* Media Player Component */
+.media-toggle {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(135, 206, 235, 0.2);
+    border: 1px solid rgba(135, 206, 235, 0.4);
+    border-radius: 4px;
+    color: #87ceeb;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.media-toggle:hover {
+    background: rgba(135, 206, 235, 0.3);
+    border-color: rgba(135, 206, 235, 0.6);
+    color: #fff;
+}
+
+.media-toggle:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    background: rgba(135, 206, 235, 0.4);
+}
+
+.media-toggle-icon {
+    margin-right: 0.25rem;
+    font-size: 0.9em;
+}
+
+.media-content {
+    margin-top: 0.75rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(135, 206, 235, 0.3);
+    display: none;
+}
+
+.media-content.expanded {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .media-content.expanded {
+        animation: none;
+    }
+}
+
+.media-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(135, 206, 235, 0.3);
+}
+
+.media-tab {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: rgba(135, 206, 235, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.media-tab.active {
+    color: #87ceeb;
+    border-bottom-color: #87ceeb;
+}
+
+.media-tab:hover {
+    color: #fff;
+    background: rgba(135, 206, 235, 0.1);
+}
+
+.media-tab:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.media-panel {
+    display: none;
+}
+
+.media-panel.active {
+    display: block;
+}
+
+.youtube-embed {
+    width: 100%;
+    height: 315px;
+    border: none;
+    border-radius: 6px;
+    background: #000;
+}
+
+.podcast-player {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.podcast-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.podcast-thumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.podcast-details h4 {
+    margin: 0 0 0.25rem 0;
+    color: #87ceeb;
+    font-size: 0.95rem;
+}
+
+.podcast-details p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.play-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #87ceeb;
+    color: #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.play-button:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+.play-button:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.audio-progress {
+    flex: 1;
+    height: 4px;
+    background: rgba(135, 206, 235, 0.3);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+}
+
+.audio-progress-bar {
+    height: 100%;
+    background: #87ceeb;
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+.audio-time {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    min-width: 40px;
+    text-align: center;
+}
+
+.media-error {
+    padding: 1rem;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 6px;
+    color: #ffcccb;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.media-loading {
+    padding: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.media-loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(135, 206, 235, 0.3);
+    border-radius: 50%;
+    border-top-color: #87ceeb;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .media-loading::after {
+        animation: none;
+    }
+    .play-button:hover {
+        transform: none;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .container {
+        width: 98%;
+        padding: 0 0.5rem;
+    }
+    
+    .theme-toggle-container {
+        top: 1rem;
+        right: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+    
+    .container {
+        width: 100%;
+        padding: 0;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .year-display {
+        font-size: 2.5rem;
+        padding: 0.75rem;
+        margin: 1.5rem 0;
+    }
+    
+    .youtube-embed {
+        height: 250px;
+    }
+    
+    .podcast-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .media-tabs {
+        flex-direction: column;
+    }
+    
+    .audio-controls {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .navigation-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .nav-button {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .theme-toggle-container {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .year-display {
+        font-size: 1.8rem;
+    }
+    
+    .year-display.large-number {
+        font-size: 1.5rem;
+    }
+    
+    .year-display.very-large-number {
+        font-size: 1.2rem;
+    }
+    
+    .year-display.extremely-large-number {
+        font-size: 1rem;
+    }
+    
+    .youtube-embed {
+        height: 200px;
+    }
 }
