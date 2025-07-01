@@ -231,8 +231,15 @@ class TimeSlider extends HTMLElement {
         this.yearDisplay = document.getElementById('yearDisplay');
         this.eraIndicator = document.getElementById('eraIndicator');
         this.eventsContainer = document.getElementById('eventsList');
+        this.currentYearAnnouncer = document.getElementById('current-year');
+        this.currentEraAnnouncer = document.getElementById('current-era');
         
         this.setDefaultPosition();
+        this.setupEventListeners();
+        this.setupKeyboardNavigation();
+    }
+
+    setupEventListeners() {
         this.slider.addEventListener('input', (e) => this.updateYear(e.target.value));
         this.slider.addEventListener('change', (e) => this.updateYear(e.target.value));
         
@@ -243,12 +250,96 @@ class TimeSlider extends HTMLElement {
                 this.jumpToYear(targetYear);
             });
         });
+        
+        // Events list keyboard navigation
+        this.eventsContainer.addEventListener('keydown', (e) => {
+            this.handleEventsKeydown(e);
+        });
+    }
+
+    setupKeyboardNavigation() {
+        this.slider.addEventListener('keydown', (e) => {
+            let handled = false;
+            const currentValue = parseInt(this.slider.value);
+            
+            switch(e.key) {
+                case 'Home':
+                    this.jumpToYear(-13800000000); // Big Bang
+                    handled = true;
+                    break;
+                case 'End':
+                    this.jumpToYear(1e78); // Heat Death
+                    handled = true;
+                    break;
+                case 'PageUp':
+                    this.slider.value = Math.min(10000, currentValue + 100);
+                    this.updateYear(this.slider.value);
+                    handled = true;
+                    break;
+                case 'PageDown':
+                    this.slider.value = Math.max(0, currentValue - 100);
+                    this.updateYear(this.slider.value);
+                    handled = true;
+                    break;
+                case 'n':
+                case 'N':
+                    if (e.ctrlKey || e.metaKey) {
+                        this.jumpToYear(2025); // Now
+                        handled = true;
+                    }
+                    break;
+            }
+            
+            if (handled) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    }
+
+    handleEventsKeydown(e) {
+        const eventItems = this.eventsContainer.querySelectorAll('.event-item');
+        if (eventItems.length === 0) return;
+        
+        const currentFocus = document.activeElement;
+        let currentIndex = Array.from(eventItems).findIndex(item => 
+            item === currentFocus || item.contains(currentFocus)
+        );
+        
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                currentIndex = (currentIndex + 1) % eventItems.length;
+                eventItems[currentIndex].focus();
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                currentIndex = currentIndex <= 0 ? eventItems.length - 1 : currentIndex - 1;
+                eventItems[currentIndex].focus();
+                break;
+            case 'Home':
+                e.preventDefault();
+                eventItems[0].focus();
+                break;
+            case 'End':
+                e.preventDefault();
+                eventItems[eventItems.length - 1].focus();
+                break;
+        }
     }
 
     jumpToYear(year) {
         const position = this.yearToPosition(year);
         this.slider.value = Math.round(position);
         this.updateYear(this.slider.value);
+        
+        // Announce the jump to screen readers
+        const formattedYear = this.formatYear(year);
+        const era = this.getEraDescription(year);
+        this.announceToScreenReader(`Jumped to ${formattedYear}, ${era}`);
+        
+        // Focus the slider after jump
+        this.slider.focus();
     }
 
     // Convert slider position (0-10000) to year
@@ -544,15 +635,15 @@ class TimeSlider extends HTMLElement {
         if (!this.eventsContainer) return;
         
         if (events.length === 0) {
-            this.eventsContainer.innerHTML = '<div style="text-align: center; opacity: 0.7; padding: 2rem;">No major events recorded for this time period</div>';
+            this.eventsContainer.innerHTML = '<div role="listitem" style="text-align: center; opacity: 0.7; padding: 2rem;" tabindex="0">No major events recorded for this time period</div>';
             return;
         }
         
         let html = '';
         for (const eventGroup of events) {
             const formattedYear = this.formatYear(eventGroup.year);
-            html += `<div class="event-item">
-                <div class="event-year">${formattedYear}</div>
+            html += `<div class="event-item" role="listitem" tabindex="0" aria-label="Events from ${formattedYear}">
+                <div class="event-year" aria-hidden="true">${formattedYear}</div>
                 <div class="event-description">`;
             
             for (const event of eventGroup.events) {
@@ -561,7 +652,7 @@ class TimeSlider extends HTMLElement {
                     html += `• ${event}<br>`;
                 } else {
                     // Handle new format with links
-                    html += `• <a href="${event.link}" target="_blank" rel="noopener">${event.text}</a><br>`;
+                    html += `• <a href="${event.link}" target="_blank" rel="noopener" aria-label="${event.text} (opens in new window)">${event.text}</a><br>`;
                 }
             }
             
@@ -569,17 +660,54 @@ class TimeSlider extends HTMLElement {
         }
         
         this.eventsContainer.innerHTML = html;
+        
+        // Set up tabindex for keyboard navigation
+        const eventItems = this.eventsContainer.querySelectorAll('.event-item');
+        eventItems.forEach((item, index) => {
+            item.setAttribute('tabindex', '0');
+        });
     }
 
     updateYear(position) {
         const year = this.positionToYear(position);
-        this.yearDisplay.innerHTML = this.formatYear(year);
+        const formattedYear = this.formatYear(year);
+        const era = this.getEraDescription(year);
+        
+        this.yearDisplay.innerHTML = formattedYear;
         this.yearDisplay.className = `year-display ${this.getNumberClass(year)}`;
-        this.eraIndicator.textContent = this.getEraDescription(year);
+        this.eraIndicator.textContent = era;
+        
+        // Update ARIA attributes
+        this.slider.setAttribute('aria-valuetext', `${formattedYear}, ${era}`);
+        
+        // Announce changes to screen readers (throttled)
+        this.throttledAnnounce(formattedYear, era);
         
         // Display relevant events
         const relevantEvents = this.findRelevantEvents(year);
         this.displayEvents(relevantEvents);
+    }
+
+    throttledAnnounce(year, era) {
+        clearTimeout(this.announceTimeout);
+        this.announceTimeout = setTimeout(() => {
+            if (this.currentYearAnnouncer) {
+                this.currentYearAnnouncer.textContent = year;
+            }
+            if (this.currentEraAnnouncer) {
+                this.currentEraAnnouncer.textContent = era;
+            }
+        }, 500); // Throttle announcements to avoid spam
+    }
+
+    announceToScreenReader(message) {
+        if (this.currentYearAnnouncer) {
+            this.currentYearAnnouncer.textContent = message;
+            // Clear after announcement
+            setTimeout(() => {
+                this.currentYearAnnouncer.textContent = '';
+            }, 1000);
+        }
     }
 }
 

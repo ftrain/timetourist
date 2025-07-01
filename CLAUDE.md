@@ -56,3 +56,8 @@ Uses a custom `TimeSlider` class that extends HTMLElement, though the implementa
 - Year 0 is treated as a valid year (no historical discontinuity)
 - Smooth transitions between positive and negative years
 - Include buttons to link to "Big Bang," "Now," and "Heat Death"
+
+## Git Configuration
+  - Auto-commit changes: Yes
+  - Always run tests before committing: Yes
+  

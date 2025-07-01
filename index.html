@@ -7,35 +7,65 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div class="container">
-        <h1>Time Slider</h1>
-        <p class="subtitle">Navigate through all of time - from the Big Bang to the heat death of the universe</p>
+        <header>
+            <h1 id="main-title">Time Slider</h1>
+            <p class="subtitle">Navigate through all of time - from the Big Bang to the heat death of the universe</p>
+        </header>
         
-        <div class="navigation-buttons">
-            <button class="nav-button" data-year="-13800000000">Big Bang</button>
-            <button class="nav-button" data-year="2025">Now</button>
-            <button class="nav-button" data-year="1000000000000000000000000000000000000000000000000000000000000000000000000000000">Heat Death</button>
-        </div>
+        <main id="main-content">
+        
+        <section class="navigation-buttons" role="navigation" aria-labelledby="nav-heading">
+            <h2 id="nav-heading" class="sr-only">Quick Navigation</h2>
+            <button class="nav-button" data-year="-13800000000" aria-describedby="big-bang-desc">
+                Big Bang
+                <span id="big-bang-desc" class="sr-only">Jump to 13.8 billion years ago</span>
+            </button>
+            <button class="nav-button" data-year="2025" aria-describedby="now-desc">
+                Now
+                <span id="now-desc" class="sr-only">Jump to present day, 2025</span>
+            </button>
+            <button class="nav-button" data-year="1000000000000000000000000000000000000000000000000000000000000000000000000000000" aria-describedby="heat-death-desc">
+                Heat Death
+                <span id="heat-death-desc" class="sr-only">Jump to the heat death of the universe</span>
+            </button>
+        </section>
 
-        <div class="slider-container">
+        <section class="slider-container" role="region" aria-labelledby="slider-heading">
+            <h2 id="slider-heading" class="sr-only">Time Navigation Slider</h2>
+            <label for="timeSlider" class="sr-only">Navigate through time from Big Bang to Heat Death</label>
             <input type="range"
                    class="slider"
                    id="timeSlider"
                    min="0"
                    max="10000"
                    step="1"
-                   value="5000">
-        </div>
+                   value="5000"
+                   aria-label="Time slider: Navigate from Big Bang to Heat Death of Universe"
+                   aria-describedby="current-year current-era"
+                   aria-valuemin="0"
+                   aria-valuemax="10000"
+                   role="slider">
+            <div class="slider-instructions" id="slider-help">
+                <span class="sr-only">Use arrow keys to navigate through time. Press Home for Big Bang, End for Heat Death, or Page Up/Down for larger jumps.</span>
+            </div>
+        </section>
 
-        <div class="era-indicator" id="eraIndicator">Present Day</div>
+        <section class="current-time-display" role="region" aria-labelledby="time-display-heading">
+            <h2 id="time-display-heading" class="sr-only">Current Time Period</h2>
+            <div class="era-indicator" id="eraIndicator" aria-live="polite" aria-atomic="true">Present Day</div>
+            <div class="year-display" id="yearDisplay" aria-live="polite" aria-atomic="true" role="status" aria-label="Current year">2025 CE</div>
+            <div id="current-year" class="sr-only" aria-live="assertive"></div>
+            <div id="current-era" class="sr-only" aria-live="polite"></div>
+        </section>
 
-        <div class="year-display" id="yearDisplay">2025 CE</div>
-
-        <div class="events-container" id="eventsContainer">
-            <div class="events-list" id="eventsList"></div>
-        </div>
-
-
+        <section class="events-container" id="eventsContainer" role="region" aria-labelledby="events-heading">
+            <h2 id="events-heading">Historical Events</h2>
+            <div class="events-list" id="eventsList" role="list" aria-live="polite" tabindex="0" aria-label="List of historical events for current time period"></div>
+        </section>
+        
+        </main>
     </div>
 
     <script src="script.js"></script>
